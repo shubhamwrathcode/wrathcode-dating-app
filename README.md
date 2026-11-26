@@ -1,6 +1,6 @@
-# Amora — Premium Dating App (Wrathcode demo)
+# DilSe — Premium Dating App (Wrathcode demo)
 
-Static, fully interactive React Native demo of **Amora**, the white-label "intentional dating" app from the Wrathcode PRD.
+Static, fully interactive React Native demo of **DilSe**, the white-label "intentional dating" app from the Wrathcode PRD.
 No backend yet: every flow runs locally on seeded data through a repository layer that mirrors the future Node.js / Socket.IO API.
 
 - React Native **0.88** (CLI, New Architecture, Hermes) + TypeScript
