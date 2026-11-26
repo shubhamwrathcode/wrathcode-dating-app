@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- DilSe brand (matches src/core/theme/gradients.ts "romance") -->
+    <color name="splash_background">#320066</color>
+    <color name="brand_purple">#7C03B2</color>
+    <color name="brand_magenta">#DE24F8</color>
+</resources>

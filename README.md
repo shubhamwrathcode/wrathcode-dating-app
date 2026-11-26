@@ -1,97 +1,90 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Amora — Premium Dating App (Wrathcode demo)
 
-# Getting Started
+Static, fully interactive React Native demo of **Amora**, the white-label "intentional dating" app from the Wrathcode PRD.
+No backend yet: every flow runs locally on seeded data through a repository layer that mirrors the future Node.js / Socket.IO API.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+- React Native **0.88** (CLI, New Architecture, Hermes) + TypeScript
+- **MVVM**: `data` (models, mock, repositories) → `domain` (use cases) → `store` (zustand, persisted) → `viewmodels` (hooks) → `screens` (views)
+- Reanimated 4 + Gesture Handler for 60fps UI-thread animation; react-native-svg for icons, gradients, rings and charts
+- Light + dark theme, English + Hindi, every animation respects the OS *Reduce motion* setting
 
-## Step 1: Start Metro
+## Setup
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
-
-To start the Metro dev server, run the following command from the root of your React Native project:
-
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+```bash
+npm run setup          # installs navigation, reanimated, worklets, gesture-handler, svg, zustand, async-storage
+npm run fonts          # links Poppins + Lora (assets/fonts) into iOS & Android
+npm run pods           # iOS only
+npm start -- --reset-cache
+npm run android        # or: npm run ios
 ```
 
-## Step 2: Build and run your app
+`npm run setup` installs the latest compatible versions. If you install `react-native-reanimated@3` instead of 4,
+change the last Babel plugin in `babel.config.js` to `'react-native-reanimated/plugin'` and drop `react-native-worklets`.
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+## Demo logins
 
-### Android
+| Persona | Phone | OTP |
+|---|---|---|
+| Aarav (man, looking for women) | 99999 00001 | 123456 |
+| Sara (woman, looking for men) | 99999 00002 | 123456 |
 
-```sh
-# Using npm
-npm run android
+Both have pre-made matches and chats. Any other 10-digit number (or Google / Apple) starts a new account and runs full onboarding.
+Seeded chats demo each story beat: an active chat with unread messages, a **48h reply reminder**, a **5-day close-chat** suggestion, a Super Like match and a fresh match with **AI icebreakers**.
 
-# OR using Yarn
-yarn android
+## 5-minute sales demo
+
+1. **Splash → Welcome**: heart draws and fills, parallax carousel.
+2. **Onboarding** (new number): intent selection, photos with drag-to-reorder, selfie verification → blue tick.
+3. **Picks** tab: compatibility rings count up, tap a pick for *Why you match*.
+4. **Discover**: swipe right / left / up (super like), tap the photo to flip, tap the info area for the full profile. Likes on people who already liked you trigger **It's a Match**.
+5. **Chat**: icebreakers, voice note (mic → send), `+` → *Plan a date*, long-press a bubble to react or reply, double-tap for ❤️, `⋯` → demo screenshot alert / close chat kindly / report.
+6. **Profile → Safety centre**: verified-only, trusted contact, date check-in with hold-to-SOS.
+7. **Likes** tab: blurred grid → *Unlock* → paywall → purchase → success → likes unlocked.
+
+## Folder structure
+
+```
+src/
+  app/                 App root, providers, store hydration
+  core/
+    constants/         Plans, intents, interests, prompts, limits
+    theme/             Design tokens from the PRD (colours, gradients, type, spacing, shadows, motion)
+    i18n/              English / Hindi strings
+    hooks/             Voice recorder, playback, ticking clock
+    services/          Haptics, moderation (profanity / NSFW / scam), icebreakers, realtime transport, storage
+    utils/             Dates, formatting, seeded RNG, compatibility scoring
+  data/
+    models/            Typed domain models
+    mock/              70 seeded profiles, photos, demo personas + chats
+    repositories/      auth / profile / chat / premium — swap internals for real APIs
+  domain/              Use cases: swipe & match, send message, sign-in / delete account
+  store/               zustand stores (session, settings, discovery, chat, premium, notifications, toast)
+  navigation/          Root stack (auth → onboarding → app), custom animated tab bar
+  components/          Design-system components (buttons, chips, sheets, rings, photo grid, waveform…)
+  features/
+    auth/              Splash, Welcome, Login, OTP
+    onboarding/        Name+DOB, Gender, Intent, Photos, Interests, Prompts, Lifestyle, Voice, Location, Verify, All set
+    discover/          Swipe deck, Filters sheet, Profile detail, It's a Match
+    picks/             Daily Picks, Likes you
+    chat/              Chats list, Chat room, Date planner, Audio/video call
+    profile/           My profile, Edit, Preview, Settings, Notifications
+    safety/            Safety centre, Report flow
+    premium/           Paywall, Boost, Purchase success
 ```
 
-### iOS
+Each feature follows the same pattern: `screens/` render, `viewmodels/use*ViewModel.ts` own state and logic, `components/` are feature-local UI.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+## Where the backend plugs in
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+| Today (static) | Production |
+|---|---|
+| `authRepository` (OTP 123456) | Firebase Auth / MSG91 + JWT |
+| `profileRepository` + `data/mock` | REST + MongoDB 2dsphere |
+| `core/services/realtime.ts` + `chatRepository` | `socket.io-client` (same events: `message`, `status`, `typing`) |
+| `premiumRepository` | RevenueCat (Play Billing / StoreKit), Razorpay on web |
+| `icebreakers.ts` | LLM endpoint with both profiles as input |
+| `moderation.ts` | Rekognition / Vision NSFW, profanity library |
+| `haptics.ts` (Vibration API) | `react-native-haptic-feedback` |
+| Demo gallery pickers, simulated recorder & liveness | image picker + crop, audio recorder, liveness SDK, Agora/WebRTC |
 
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Fonts: **Poppins** (Regular / Medium / Bold) for the UI and **Lora SemiBold Italic** for romantic moments (splash, It's a Match), both OFL-licensed, in `assets/fonts`. Change them in `src/core/theme/tokens.ts`.

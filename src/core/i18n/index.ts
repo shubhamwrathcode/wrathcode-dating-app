@@ -1,0 +1,81 @@
+import { useCallback } from 'react';
+import { useSettingsStore } from '@/store/useSettingsStore';
+
+const en = {
+  'tab.discover': 'Discover',
+  'tab.picks': 'Picks',
+  'tab.likes': 'Likes',
+  'tab.chats': 'Chats',
+  'tab.profile': 'Profile',
+  'common.continue': 'Continue',
+  'common.skip': 'Skip',
+  'common.save': 'Save',
+  'common.cancel': 'Cancel',
+  'common.done': 'Done',
+  'welcome.cta': 'Get started',
+  'welcome.login': 'I already have an account',
+  'login.title': 'What’s your number?',
+  'login.subtitle': 'We’ll text you a code to verify it’s really you.',
+  'login.sendCode': 'Send code',
+  'otp.title': 'Enter your code',
+  'otp.verify': 'Verify',
+  'discover.title': 'Discover',
+  'discover.empty': 'You’ve seen everyone nearby',
+  'discover.emptyHint': 'Widen your filters or check back tomorrow for fresh profiles.',
+  'picks.title': 'Daily Picks',
+  'picks.subtitle': 'Hand-picked for you, refreshed every morning',
+  'likes.title': 'Likes you',
+  'chats.title': 'Chats',
+  'chats.newMatches': 'New matches',
+  'chats.messages': 'Messages',
+  'profile.title': 'Profile',
+  'settings.title': 'Settings',
+  'safety.title': 'Safety centre',
+  'match.title': 'It’s a Match',
+  'match.send': 'Send a message',
+  'match.keep': 'Keep swiping',
+  'paywall.title': 'Upgrade to DilSe Premium',
+} as const;
+
+export type TKey = keyof typeof en;
+
+const hi: Partial<Record<TKey, string>> = {
+  'tab.discover': 'खोजें',
+  'tab.picks': 'पिक्स',
+  'tab.likes': 'लाइक्स',
+  'tab.chats': 'चैट',
+  'tab.profile': 'प्रोफ़ाइल',
+  'common.continue': 'आगे बढ़ें',
+  'common.skip': 'छोड़ें',
+  'common.save': 'सेव करें',
+  'common.cancel': 'रद्द करें',
+  'common.done': 'हो गया',
+  'welcome.cta': 'शुरू करें',
+  'welcome.login': 'मेरा पहले से अकाउंट है',
+  'login.title': 'आपका नंबर क्या है?',
+  'login.subtitle': 'हम आपको एक कोड भेजेंगे ताकि पता चले कि ये आप ही हैं।',
+  'login.sendCode': 'कोड भेजें',
+  'otp.title': 'अपना कोड डालें',
+  'otp.verify': 'वेरिफ़ाई करें',
+  'discover.title': 'खोजें',
+  'discover.empty': 'आपने आस-पास सबको देख लिया',
+  'discover.emptyHint': 'फ़िल्टर बढ़ाएँ या कल नए प्रोफ़ाइल देखें।',
+  'picks.title': 'आज के पिक्स',
+  'picks.subtitle': 'आपके लिए चुने गए, हर सुबह नए',
+  'likes.title': 'आपको किसने पसंद किया',
+  'chats.title': 'चैट',
+  'chats.newMatches': 'नए मैच',
+  'chats.messages': 'मैसेज',
+  'profile.title': 'प्रोफ़ाइल',
+  'settings.title': 'सेटिंग्स',
+  'safety.title': 'सुरक्षा केंद्र',
+  'match.title': 'ये मैच है!',
+  'match.send': 'मैसेज भेजें',
+  'match.keep': 'स्वाइप जारी रखें',
+  'paywall.title': 'DilSe प्रीमियम लें',
+};
+
+export const useT = () => {
+  const lang = useSettingsStore(s => s.language);
+  return useCallback((key: TKey) => (lang === 'hi' ? hi[key] ?? en[key] : en[key]), [lang]);
+};
